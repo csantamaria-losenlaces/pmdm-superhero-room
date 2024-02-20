@@ -8,15 +8,15 @@ import com.csantamaria.room.SuperheroDetailResponse
 @Entity(tableName = "superhero_details")
 data class DetailEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Int = 0,
-    @ColumnInfo(name = "intelligence") val intelligence:String,
-    @ColumnInfo(name = "strength") val strength:String,
-    @ColumnInfo(name = "speed") val speed:String,
-    @ColumnInfo(name = "durability") val durability:String,
-    @ColumnInfo(name = "power") val power:String,
-    @ColumnInfo(name = "combat") val combat:String,
+    @ColumnInfo(name = "intelligence") val intelligence: String,
+    @ColumnInfo(name = "strength") val strength: String,
+    @ColumnInfo(name = "speed") val speed: String,
+    @ColumnInfo(name = "durability") val durability: String,
+    @ColumnInfo(name = "power") val power: String,
+    @ColumnInfo(name = "combat") val combat: String,
 
-    @ColumnInfo(name = "fullName") val fullName:String,
-    @ColumnInfo(name = "publisher") val publisher:String
+    @ColumnInfo(name = "fullName") val fullName: String,
+    @ColumnInfo(name = "publisher") val publisher: String
 )
 
 fun SuperheroDetailResponse.toDatabase() = DetailEntity(

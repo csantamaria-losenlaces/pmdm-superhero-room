@@ -3,15 +3,18 @@ package com.csantamaria.room
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.csantamaria.room.database.dao.ListDao
+import com.csantamaria.room.database.entities.ListEntity
 
 class SuperheroAdapter(
-    var superheroList: List<SuperheroItemResponse> = emptyList(),
+    private var superheroList: MutableList<ListEntity>,
     private val navigateToDetailActivity: (String) -> Unit
 ) :
     RecyclerView.Adapter<SuperheroViewHolder>() {
 
-    fun updateList(list: List<SuperheroItemResponse>) {
-        superheroList = list
+    fun updateList(newList: ListDao) {
+        superheroList.clear()
+        superheroList.addAll(newList)
         notifyDataSetChanged()
     }
 

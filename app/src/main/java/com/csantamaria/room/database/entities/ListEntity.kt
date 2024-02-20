@@ -8,8 +8,8 @@ import com.csantamaria.room.SuperheroItemResponse
 @Entity(tableName = "superheros_list")
 data class ListEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Int = 0,
-    @ColumnInfo(name = "name") val name:String,
-    @ColumnInfo(name = "image") val image:String
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "image") val image: String
 )
 
 fun SuperheroItemResponse.toDatabase() = ListEntity(

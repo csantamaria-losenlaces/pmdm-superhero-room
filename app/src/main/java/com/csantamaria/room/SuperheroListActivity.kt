@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Room
+import com.csantamaria.room.database.SuperheroDatabase
 import com.csantamaria.room.databinding.ActivitySuperheroListBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +23,10 @@ class SuperheroListActivity : AppCompatActivity() {
     private lateinit var retrofit: Retrofit
 
     private lateinit var adapter: SuperheroAdapter
+
+    private val room = Room.databaseBuilder(this, SuperheroDatabase::class.java, "superheros").build()
+    private val listDao = room.getListDao()
+    private val detailDao = room.getDetailDao()
 
     companion object {
         const val EXTRA_ID = "extra_id"
@@ -48,7 +54,6 @@ class SuperheroListActivity : AppCompatActivity() {
                 searchByName(query.orEmpty())
                 return false
             }
-
             override fun onQueryTextChange(newText: String?) = false
         })
 
@@ -59,24 +64,7 @@ class SuperheroListActivity : AppCompatActivity() {
     }
 
     private fun searchByName(query: String) {
-        binding.progressBar.isVisible = true
-        CoroutineScope(Dispatchers.IO).launch {
-            val myResponse: Response<SuperheroDataResponse> =
-                retrofit.create(ApiService::class.java).getSuperheroes(query)
-            if (myResponse.isSuccessful) {
-                Log.i("Consulta", "Funciona :)")
-                val response: SuperheroDataResponse? = myResponse.body()
-                if (response != null) {
-                    Log.i("Cuerpo de la consulta", response.toString())
-                    runOnUiThread {
-                        adapter.updateList(response.superheroes)
-                        binding.progressBar.isVisible = false
-                    }
-                }
-            } else {
-                Log.i("Consulta", "No funciona :(")
-            }
-        }
+
     }
 
     private fun getRetrofit(): Retrofit {
@@ -85,6 +73,36 @@ class SuperheroListActivity : AppCompatActivity() {
             .baseUrl("https://superheroapi.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    private fun apiToDb() {
+        binding.progressBar.isVisible = true;
+        CoroutineScope(Dispatchers.IO).launch {
+            val myResponse: Response<SuperheroDataResponse> =
+                retrofit.create(ApiService::class.java).getSuperheros();
+            if (myResponse.isSuccessful()) {
+                Log.i("Consulta", "Funciona :)");
+                val response: SuperheroDataResponse? = myResponse.body();
+                if (response != null) {
+                    Log.i("Cuerpo de la consulta", response.toString());
+
+                    // Almacenar datos en Room
+                    for (superhero in response.superheroes) {
+                        listDao.insertAll();
+                        detailDao.insertAll();
+                    }
+
+                    // Actualizar el adaptador con datos de Room
+                    runOnUiThread {
+                        adapter.updateList(listDao);
+                        adapter.notifyDataSetChanged();
+                        binding.progressBar.isVisible = false;
+                    }
+                }
+            } else {
+                Log.i("Consulta", "No funciona :(");
+            }
+        }
     }
 
 }
