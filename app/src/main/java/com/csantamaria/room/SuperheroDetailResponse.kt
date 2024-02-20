@@ -3,9 +3,12 @@ package com.csantamaria.room
 import com.google.gson.annotations.SerializedName
 
 data class SuperheroDetailResponse(
-    @SerializedName("name") val name: String,
+    @SerializedName("response") val response: String,
+    @SerializedName("results") val superheroList: List<SuperheroRootResponse>
+)
+
+data class SuperheroRootResponse(
     @SerializedName("powerstats") val powerstats: PowerStatsResponse,
-    @SerializedName("image") val image: SuperheroImageDetailResponse,
     @SerializedName("biography") val biography: Biography
 )
 
@@ -16,10 +19,6 @@ data class PowerStatsResponse(
     @SerializedName("durability") val durability: String,
     @SerializedName("power") val power: String,
     @SerializedName("combat") val combat: String
-)
-
-data class SuperheroImageDetailResponse(
-    @SerializedName("url") val url: String
 )
 
 data class Biography(

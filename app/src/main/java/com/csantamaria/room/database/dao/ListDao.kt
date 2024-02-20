@@ -13,7 +13,7 @@ interface ListDao {
     suspend fun deleteAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll()
+    suspend fun insertAll(list: List<ListEntity>)
 
     @Query("SELECT * FROM superheros_list WHERE name LIKE :query")
     suspend fun getSuperheros(query: String): List<ListEntity>

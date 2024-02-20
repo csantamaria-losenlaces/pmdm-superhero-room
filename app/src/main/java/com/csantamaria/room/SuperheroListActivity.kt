@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.csantamaria.room.database.SuperheroDatabase
+import com.csantamaria.room.database.entities.toDatabase
 import com.csantamaria.room.databinding.ActivitySuperheroListBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,9 +25,7 @@ class SuperheroListActivity : AppCompatActivity() {
 
     private lateinit var adapter: SuperheroAdapter
 
-    private val room = Room.databaseBuilder(this, SuperheroDatabase::class.java, "superheros").build()
-    private val listDao = room.getListDao()
-    private val detailDao = room.getDetailDao()
+    private lateinit var room: SuperheroDatabase
 
     companion object {
         const val EXTRA_ID = "extra_id"
@@ -38,6 +37,10 @@ class SuperheroListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         retrofit = getRetrofit()
+
+        room = Room.databaseBuilder(this, SuperheroDatabase::class.java, "superheros").build()
+
+        apiToDb()
 
         initUI()
     }
@@ -76,31 +79,36 @@ class SuperheroListActivity : AppCompatActivity() {
     }
 
     private fun apiToDb() {
-        binding.progressBar.isVisible = true;
+        binding.progressBar.isVisible = true
         CoroutineScope(Dispatchers.IO).launch {
-            val myResponse: Response<SuperheroDataResponse> =
-                retrofit.create(ApiService::class.java).getSuperheros();
-            if (myResponse.isSuccessful()) {
-                Log.i("Consulta", "Funciona :)");
-                val response: SuperheroDataResponse? = myResponse.body();
-                if (response != null) {
-                    Log.i("Cuerpo de la consulta", response.toString());
+            val dataResponseRetrofit: Response<SuperheroDataResponse> = retrofit.create(ApiService::class.java).getSuperheros()
+            val detailResponseRetrofit: Response<SuperheroDetailResponse> = retrofit.create(ApiService::class.java).getSuperheroDetail()
 
+            if (dataResponseRetrofit.isSuccessful && detailResponseRetrofit.isSuccessful) {
+
+                Log.i("Consulta", "Funciona :)")
+
+                val dataResponseBody: SuperheroDataResponse? = dataResponseRetrofit.body()
+                val detailResponseBody: SuperheroDetailResponse? = detailResponseRetrofit.body()
+
+                if (dataResponseBody != null) {
+                    Log.i("Cuerpo de la consulta DataResponse", dataResponseBody.toString())
                     // Almacenar datos en Room
-                    for (superhero in response.superheroes) {
-                        listDao.insertAll();
-                        detailDao.insertAll();
-                    }
-
-                    // Actualizar el adaptador con datos de Room
-                    runOnUiThread {
-                        adapter.updateList(listDao);
-                        adapter.notifyDataSetChanged();
-                        binding.progressBar.isVisible = false;
-                    }
+                    val list = dataResponseBody.superheroes.map { it.toDatabase() }
+                    room.getListDao().insertAll(list)
                 }
+
+                if (detailResponseBody != null) {
+                    Log.i("Cuerpo de la consulta DetailResponse", detailResponseBody.toString())
+                    // Almacenar datos en Room
+                    val list = detailResponseBody.superheroList.map { it.toDatabase() }
+                    room.getListDao().insertAll(list)
+                }
+
             } else {
-                Log.i("Consulta", "No funciona :(");
+
+                Log.i("Consulta", "No funciona :(")
+
             }
         }
     }
