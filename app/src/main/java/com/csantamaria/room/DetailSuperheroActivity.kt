@@ -18,7 +18,7 @@ class DetailSuperheroActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailSuperheroBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    /*override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityDetailSuperheroBinding.inflate(layoutInflater)
@@ -31,7 +31,7 @@ class DetailSuperheroActivity : AppCompatActivity() {
     private fun getSuperheroInformation(id: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val superheroDetail =
-                getRetrofit().create(ApiService::class.java).getSuperheroDetail(id)
+                getRetrofit().create(ApiService::class.java).getSuperheroDetails(id)
             if (superheroDetail.body() != null) {
                 runOnUiThread { createUI(superheroDetail.body()!!) }
             }
@@ -88,6 +88,6 @@ class DetailSuperheroActivity : AppCompatActivity() {
             s -> relativesFormatted = relativesFormatted.plus("• $s)\n")
         }
         return relativesFormatted.dropLast(2)
-    }
+    }*/
 
 }

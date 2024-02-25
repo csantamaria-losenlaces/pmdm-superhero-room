@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.csantamaria.room.database.entities.DetailEntity
-import com.csantamaria.room.database.entities.ListEntity
 
 @Dao
 interface DetailDao {
@@ -14,7 +13,7 @@ interface DetailDao {
     suspend fun deleteAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll()
+    suspend fun insertAll(list: List<DetailEntity>)
 
     @Query("SELECT * FROM superhero_details WHERE id LIKE :id")
     suspend fun getSuperheroDetails(id: Int): DetailEntity

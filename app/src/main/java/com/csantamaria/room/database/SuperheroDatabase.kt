@@ -10,7 +10,7 @@ import com.csantamaria.room.database.entities.ListEntity
 @Database(entities = [ListEntity::class, DetailEntity::class], version = 1)
 abstract class SuperheroDatabase : RoomDatabase() {
 
-    abstract fun getListDao(): ListDao
-    abstract fun getDetailDao(): DetailDao
+    abstract fun listDao(): ListDao
+    abstract fun detailsDao(): DetailDao
 
 }

@@ -9,6 +9,6 @@ interface ApiService {
     suspend fun getSuperheros(): Response<SuperheroDataResponse>
 
     @GET("/api/1532094887623548/search/bat")
-    suspend fun getSuperheroDetail(): Response<SuperheroDetailResponse>
+    suspend fun getSuperheroDetails(): Response<SuperheroDetailResponse>
 
 }

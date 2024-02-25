@@ -3,7 +3,7 @@ package com.csantamaria.room.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.csantamaria.room.SuperheroDetailResponse
+import com.csantamaria.room.SuperheroRootResponse
 
 @Entity(tableName = "superhero_details")
 data class DetailEntity(
@@ -15,11 +15,11 @@ data class DetailEntity(
     @ColumnInfo(name = "power") val power: String,
     @ColumnInfo(name = "combat") val combat: String,
 
-    @ColumnInfo(name = "fullName") val fullName: String,
+    @ColumnInfo(name = "full-name") val fullName: String,
     @ColumnInfo(name = "publisher") val publisher: String
 )
 
-fun SuperheroDetailResponse.toDatabase() = DetailEntity(
+fun SuperheroRootResponse.toDatabase() = DetailEntity(
     intelligence = powerstats.intelligence,
     strength = powerstats.strength,
     speed = powerstats.speed,

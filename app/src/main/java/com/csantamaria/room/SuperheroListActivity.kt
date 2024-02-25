@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.csantamaria.room.database.SuperheroDatabase
+import com.csantamaria.room.database.entities.ListEntity
 import com.csantamaria.room.database.entities.toDatabase
 import com.csantamaria.room.databinding.ActivitySuperheroListBinding
 import kotlinx.coroutines.CoroutineScope
@@ -22,10 +23,8 @@ class SuperheroListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySuperheroListBinding
     private lateinit var retrofit: Retrofit
-
-    private lateinit var adapter: SuperheroAdapter
-
     private lateinit var room: SuperheroDatabase
+    private lateinit var adapter: SuperheroAdapter
 
     companion object {
         const val EXTRA_ID = "extra_id"
@@ -45,7 +44,7 @@ class SuperheroListActivity : AppCompatActivity() {
         initUI()
     }
 
-    private fun navigateToDetail(id: String) {
+    private fun navigateToDetail(id: Int) {
         val intent = Intent(this, DetailSuperheroActivity::class.java)
         intent.putExtra(EXTRA_ID, id)
         startActivity(intent)
@@ -68,6 +67,24 @@ class SuperheroListActivity : AppCompatActivity() {
 
     private fun searchByName(query: String) {
 
+        Log.i("searchByName", "Se está ejecutando el método searchByName()")
+
+        binding.progressBar.isVisible = true
+
+        CoroutineScope(Dispatchers.IO).launch {
+
+            var superheroList: List<ListEntity> = room.listDao().searchByName(query)
+
+            Log.i("Room", "Se ha buscado \"$query\". Resultados de la consulta: ${superheroList.size}")
+            superheroList.forEach { Log.i("Room", "ID: ${it.id}. Nombre: ${it.name}") }
+
+            runOnUiThread {
+                adapter.updateList(superheroList)
+                binding.progressBar.isVisible = false
+            }
+
+        }
+
     }
 
     private fun getRetrofit(): Retrofit {
@@ -79,10 +96,10 @@ class SuperheroListActivity : AppCompatActivity() {
     }
 
     private fun apiToDb() {
-        binding.progressBar.isVisible = true
         CoroutineScope(Dispatchers.IO).launch {
+
             val dataResponseRetrofit: Response<SuperheroDataResponse> = retrofit.create(ApiService::class.java).getSuperheros()
-            val detailResponseRetrofit: Response<SuperheroDetailResponse> = retrofit.create(ApiService::class.java).getSuperheroDetail()
+            val detailResponseRetrofit: Response<SuperheroDetailResponse> = retrofit.create(ApiService::class.java).getSuperheroDetails()
 
             if (dataResponseRetrofit.isSuccessful && detailResponseRetrofit.isSuccessful) {
 
@@ -91,18 +108,23 @@ class SuperheroListActivity : AppCompatActivity() {
                 val dataResponseBody: SuperheroDataResponse? = dataResponseRetrofit.body()
                 val detailResponseBody: SuperheroDetailResponse? = detailResponseRetrofit.body()
 
-                if (dataResponseBody != null) {
+                if (dataResponseBody != null && detailResponseBody != null) {
                     Log.i("Cuerpo de la consulta DataResponse", dataResponseBody.toString())
-                    // Almacenar datos en Room
-                    val list = dataResponseBody.superheroes.map { it.toDatabase() }
-                    room.getListDao().insertAll(list)
-                }
-
-                if (detailResponseBody != null) {
                     Log.i("Cuerpo de la consulta DetailResponse", detailResponseBody.toString())
+
                     // Almacenar datos en Room
-                    val list = detailResponseBody.superheroList.map { it.toDatabase() }
-                    room.getListDao().insertAll(list)
+                    val dataList = mutableListOf<SuperheroItemResponse>()
+
+                    for (item in dataResponseBody.superheroes) {
+                        dataList.add(item)
+                    }
+
+                    val entityList = dataList.map { it.toDatabase() }
+
+                    room.listDao().deleteAll()
+                    room.listDao().resetId()
+                    room.listDao().insertAll(entityList)
+
                 }
 
             } else {
