@@ -13,7 +13,8 @@
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/superhero_image_cover" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
@@ -130,8 +131,8 @@
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Intelligence"
-                    android:textSize="10sp"
+                    android:text="@string/intelligence"
+                    android:textSize="11sp"
                     android:gravity="center"/>
 
                 <TextView
@@ -141,8 +142,8 @@
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Strength"
-                    android:textSize="10sp"
+                    android:text="@string/strength"
+                    android:textSize="11sp"
                     android:gravity="center"/>
 
                 <TextView
@@ -152,8 +153,8 @@
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Speed"
-                    android:textSize="10sp"
+                    android:text="@string/speed"
+                    android:textSize="11sp"
                     android:gravity="center"/>
 
                 <TextView
@@ -163,8 +164,8 @@
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Durability"
-                    android:textSize="10sp"
+                    android:text="@string/durability"
+                    android:textSize="11sp"
                     android:gravity="center"/>
 
                 <TextView
@@ -174,8 +175,8 @@
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Power"
-                    android:textSize="10sp"
+                    android:text="@string/power"
+                    android:textSize="11sp"
                     android:gravity="center"/>
 
                 <TextView
@@ -185,28 +186,11 @@
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Combat"
-                    android:textSize="10sp"
+                    android:text="@string/combat"
+                    android:textSize="11sp"
                     android:gravity="center"/>
 
             </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Relatives"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="28sp"/>
-
-            <TextView
-                android:id="@+id/tvConnections"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                tools:text="Aquí van los parientes del superhéroe..."
-                android:layout_margin="14dp"/>
 
         </LinearLayout>
 

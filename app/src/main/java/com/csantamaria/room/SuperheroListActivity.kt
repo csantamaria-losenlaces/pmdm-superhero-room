@@ -44,7 +44,7 @@ class SuperheroListActivity : AppCompatActivity() {
         initUI()
     }
 
-    private fun navigateToDetail(id: Int) {
+    private fun navigateToDetail(id: String) {
         val intent = Intent(this, DetailSuperheroActivity::class.java)
         intent.putExtra(EXTRA_ID, id)
         startActivity(intent)
@@ -73,7 +73,7 @@ class SuperheroListActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
 
-            var superheroList: List<ListEntity> = room.listDao().searchByName(query)
+            val superheroList: List<ListEntity> = room.listDao().searchByName(query)
 
             Log.i("Room", "Se ha buscado \"$query\". Resultados de la consulta: ${superheroList.size}")
             superheroList.forEach { Log.i("Room", "ID: ${it.id}. Nombre: ${it.name}") }
@@ -114,16 +114,22 @@ class SuperheroListActivity : AppCompatActivity() {
 
                     // Almacenar datos en Room
                     val dataList = mutableListOf<SuperheroItemResponse>()
+                    val detailList = mutableListOf<SuperheroRootResponse>()
 
-                    for (item in dataResponseBody.superheroes) {
-                        dataList.add(item)
-                    }
+                    dataResponseBody.superheroes.forEach { dataList.add(it) }
+
+                    detailResponseBody.superheroList.forEach { detailList.add(it) }
 
                     val entityList = dataList.map { it.toDatabase() }
+                    val entityDetails = detailList.map { it.toDatabase() }
 
                     room.listDao().deleteAll()
                     room.listDao().resetId()
                     room.listDao().insertAll(entityList)
+
+                    room.detailsDao().deleteAll()
+                    room.detailsDao().resetId()
+                    room.detailsDao().insertAll(entityDetails)
 
                 }
 

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Room</string>
+    <string name="combat">Combat</string>
+    <string name="power">Power</string>
+    <string name="durability">Durability</string>
+    <string name="speed">Speed</string>
+    <string name="strength">Strength</string>
+    <string name="intelligence">Intelligence</string>
+    <string name="superhero_image_cover">Superhero image cover</string>
 </resources>

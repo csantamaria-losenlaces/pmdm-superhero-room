@@ -3,15 +3,11 @@ package com.csantamaria.room
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
-import com.csantamaria.room.database.SuperheroDatabase
 import com.csantamaria.room.database.entities.ListEntity
-import kotlinx.coroutines.newCoroutineContext
-import kotlin.coroutines.coroutineContext
 
 class SuperheroAdapter(
     var superheroList: List<ListEntity> = emptyList(),
-    private val navigateToDetailActivity: (Int) -> Unit
+    private val navigateToDetailActivity: (String) -> Unit
 ) :
 
     RecyclerView.Adapter<SuperheroViewHolder>() {

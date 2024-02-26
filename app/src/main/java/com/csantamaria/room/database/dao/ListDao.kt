@@ -21,6 +21,9 @@ interface ListDao {
     @Query("SELECT * FROM superheros_list")
     suspend fun getAll(): List<ListEntity>
 
+    @Query("SELECT * FROM superheros_list WHERE id = :id")
+    suspend fun getSuperhero(id: String): ListEntity
+
     @Query("SELECT * FROM superheros_list WHERE name LIKE '%' || :query || '%'")
     suspend fun searchByName(query: String): List<ListEntity>
 

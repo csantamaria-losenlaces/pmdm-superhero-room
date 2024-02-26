@@ -1,69 +1,66 @@
 package com.csantamaria.room
 
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.room.Room
 import com.csantamaria.room.SuperheroListActivity.Companion.EXTRA_ID
+import com.csantamaria.room.database.SuperheroDatabase
+import com.csantamaria.room.database.entities.DetailEntity
+import com.csantamaria.room.database.entities.ListEntity
 import com.csantamaria.room.databinding.ActivityDetailSuperheroBinding
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.math.roundToInt
 
 class DetailSuperheroActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailSuperheroBinding
+    private lateinit var room: SuperheroDatabase
 
-    /*override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityDetailSuperheroBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        room = Room.databaseBuilder(this, SuperheroDatabase::class.java, "superheros").build()
+
         val id: String = intent.getStringExtra(EXTRA_ID).orEmpty()
         getSuperheroInformation(id)
+
     }
 
     private fun getSuperheroInformation(id: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val superheroDetail =
-                getRetrofit().create(ApiService::class.java).getSuperheroDetails(id)
-            if (superheroDetail.body() != null) {
-                runOnUiThread { createUI(superheroDetail.body()!!) }
-            }
+            val superheroList: ListEntity = room.listDao().getSuperhero(id)
+            Log.i("Room", "Estoy buscando el ID $id")
+            val superheroDetails: DetailEntity = room.detailsDao().getSuperheroDetails(id)
+            runOnUiThread { createUI(superheroList, superheroDetails) }
         }
     }
 
-    private fun getRetrofit(): Retrofit {
-        return Retrofit
-            .Builder()
-            .baseUrl("https://superheroapi.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    private fun createUI(superheroList:ListEntity, superheroDetails: DetailEntity) {
+        Picasso.get().load(superheroList.image).into(binding.ivSuperhero)
+
+        binding.tvSuperheroName.text = superheroList.name
+        binding.tvSuperheroRealName.text = superheroDetails.fullName
+        binding.tvPublisher.text = superheroDetails.publisher
+
+        prepareStats(superheroDetails)
     }
 
-    private fun createUI(superhero: SuperheroDetailResponse) {
-        Picasso.get().load(superhero.image.url).into(binding.ivSuperhero)
-
-        binding.tvSuperheroName.text = superhero.name
-        binding.tvSuperheroRealName.text = superhero.biography.fullName
-        binding.tvPublisher.text = superhero.biography.publisher
-        prepareStats(superhero.powerstats)
-
-        binding.tvConnections.text = formatConnections(superhero.connections.relatives)
-    }
-
-    private fun prepareStats(powerstats: PowerStatsResponse) {
-        updateHeight(binding.viewIntelligence, powerstats.intelligence)
-        updateHeight(binding.viewStrength, powerstats.strength)
-        updateHeight(binding.viewSpeed, powerstats.speed)
-        updateHeight(binding.viewDurability, powerstats.durability)
-        updateHeight(binding.viewPower, powerstats.power)
-        updateHeight(binding.viewCombat, powerstats.combat)
+    private fun prepareStats(superheroDetails: DetailEntity) {
+        updateHeight(binding.viewIntelligence, superheroDetails.intelligence)
+        updateHeight(binding.viewStrength, superheroDetails.strength)
+        updateHeight(binding.viewSpeed, superheroDetails.speed)
+        updateHeight(binding.viewDurability, superheroDetails.durability)
+        updateHeight(binding.viewPower, superheroDetails.power)
+        updateHeight(binding.viewCombat, superheroDetails.combat)
     }
 
     private fun updateHeight(view: View, stat: String) {
@@ -80,14 +77,5 @@ class DetailSuperheroActivity : AppCompatActivity() {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, resources.displayMetrics)
             .roundToInt()
     }
-
-    private fun formatConnections(connections: String): String {
-        val relativesArray: List<String> = connections.split("), ")
-        var relativesFormatted = ""
-        relativesArray.forEach {
-            s -> relativesFormatted = relativesFormatted.plus("• $s)\n")
-        }
-        return relativesFormatted.dropLast(2)
-    }*/
 
 }
